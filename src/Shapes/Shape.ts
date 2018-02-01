@@ -14,23 +14,38 @@ class Point {
  * Define base class of all shapes.
  */
 abstract class Shape {
-    public points: Point[];
-    public rotation: number; // 0, 1, 2, 3, clockwise rotate.
+    protected _points: Point[];
+    protected _rotation: number; // 0, 1, 2, 3, clockwise rotate.
+
+    /*
+    * Accessors
+    */
+    get points(): Point[] {
+        return this._points;
+    }
+
+    get rotation(): number {
+        return this._rotation;
+    }
+
+    public constructor(rotation: number) {
+        this._rotation = (rotation + 1) % 4;
+    }
 
     private move(x: number, y: number): Point[] {
         let newPoints: Point[] = new Array<Point>();
 
-        for (let i = 0; i < this.points.length; ++i) {
-            newPoints.push(new Point(this.points[i].x + x, this.points[i].y + y));
+        for (let i = 0; i < this._points.length; ++i) {
+            newPoints.push(new Point(this._points[i].x + x, this._points[i].y + y));
         }
 
         return newPoints;
     }
 
     public setPosition(newPoints: Point[], isRotate = false): void {
-        this.points = newPoints;
+        this._points = newPoints;
         if (isRotate) {
-            this.rotation = (this.rotation + 1) % 4;
+            this._rotation = (this._rotation + 1) % 4;
         }
     }
 
@@ -50,7 +65,7 @@ abstract class Shape {
     }
 
     public handleRotateSucceed() {
-        this.rotation = (this.rotation + 1) % 4;
+        this._rotation = (this._rotation + 1) % 4;
     }
 
     public abstract rotate(): Point[];
