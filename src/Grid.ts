@@ -75,10 +75,10 @@ class Grid {
             }
         }
 
-        return rowsRemoved;
+        return indexOfRowsRemoved;
     }
 
-    private isPosValid(points: Point[]) {
+    public isPosValid(points: Point[]): boolean {
         let isValid: boolean = true;
 
         for (let i: number = 0; i < points.length; ++i) {
@@ -98,6 +98,22 @@ class Grid {
         }
 
         return isValid;
+    }
+
+    public initGrid(): void {
+        this.setGridStatus(false);
+    }
+
+    public clearGrid(): void {
+        this.setGridStatus(true);
+    }
+    
+    private setGridStatus(status: boolean): void {
+        for (let row: number = 0; row < this.rows; ++row) {
+            for (let column: number = 0; column < this.columns; ++column) {
+                this.blockStatus[row][column] = status;
+            }
+        }
     }
 
     /* 
