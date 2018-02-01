@@ -1,12 +1,22 @@
 class Grid {
-    private rows: number;
-    private columns: number;
-    private blockStatus: boolean[][];
-    private currentShape: Shape;
+    private _rows: number;
+    private _columns: number;
+    private _blockStatus: boolean[][];
+
+    /*
+    * Accessors
+    */
+    get rows(): number {
+        return this._rows;
+    }
+
+    get columns(): number {
+        return this._columns;
+    }
 
     constructor(rows: number, columns: number) {
-        this.rows = rows;
-        this.columns = columns;
+        this._rows = rows;
+        this._columns = columns;
     }
 
     public addShape(shape: Shape): boolean  {
@@ -17,7 +27,7 @@ class Grid {
                 ret = false;
                 break;
             }
-            this.blockStatus[shape.points[i].x][shape.points[i].y] = true;
+            this._blockStatus[shape.points[i].x][shape.points[i].y] = true;
         }
 
         return ret;
@@ -51,8 +61,8 @@ class Grid {
         // check each row effected. If it is completed, save its index;
         while (rowMax >= rowMin) {
             let rowComplete: boolean = true;
-            for (let column = 0; column < this.columns; ++column) {
-                if (this.blockStatus[rowMax][column]) {
+            for (let column = 0; column < this._columns; ++column) {
+                if (this._blockStatus[rowMax][column]) {
                     rowComplete = false;
                     break;
                 }
@@ -62,11 +72,11 @@ class Grid {
                 indexOfRowsRemoved.push(rowMax - indexOfRowsRemoved.length);
 
                 for (let row: number = rowMax; row > 0; --row) {
-                    for (let column: number = 0; column < this.columns; ++column) {
-                        this.blockStatus[row][column] = this.blockStatus[row-1][column];
+                    for (let column: number = 0; column < this._columns; ++column) {
+                        this._blockStatus[row][column] = this._blockStatus[row-1][column];
                     }
                 }
-                this.blockStatus[0][0] = false;
+                this._blockStatus[0][0] = false;
 
                 rowMin++;
             }
@@ -83,14 +93,14 @@ class Grid {
 
         for (let i: number = 0; i < points.length; ++i) {
             if ((points[i].x < 0) ||
-                (points[i].x >= this.columns) ||
-                (points[i].y >= this.rows)) {
+                (points[i].x >= this._columns) ||
+                (points[i].y >= this._rows)) {
                 isValid = false;
                 break;
             }
 
             if (points[i].y >= 0) {
-                if (this.blockStatus[points[i].x][points[i].y]) {
+                if (this._blockStatus[points[i].x][points[i].y]) {
                     isValid = false;
                     break;
                 }
@@ -109,44 +119,10 @@ class Grid {
     }
     
     private setGridStatus(status: boolean): void {
-        for (let row: number = 0; row < this.rows; ++row) {
-            for (let column: number = 0; column < this.columns; ++column) {
-                this.blockStatus[row][column] = status;
+        for (let row: number = 0; row < this._rows; ++row) {
+            for (let column: number = 0; column < this._columns; ++column) {
+                this._blockStatus[row][column] = status;
             }
         }
     }
-
-    /* 
-    private generateShape(): Shape {
-        let shape: Shape;
-        let randomType: number = Math.floor(Math.random() * 7);
-        let randomRotation: number = Math.floor(Math.random() * 4);
-       
-        switch(randomType) {
-            case 0:
-                shape = new IShape(this.columns, randomRotation);
-                break;
-            case 1:
-                shape = new LShape(true, this.columns, randomRotation);
-                break;
-            case 2:
-                shape = new LShape(false, this.columns, randomRotation);
-                break;
-            case 3:
-                shape = new OShape(this.columns, randomRotation);
-                break;
-            case 4:
-                shape = new TShape(this.columns, randomRotation);
-                break;
-            case 5:
-                shape = new ZShape(true, this.columns, randomRotation);
-                break;
-            case 6:
-                shape = new ZShape(false, this.columns, randomRotation);
-                break;
-       }
-       
-       return shape;
-   } 
-   */
 }
