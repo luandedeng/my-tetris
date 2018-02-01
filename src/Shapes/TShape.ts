@@ -1,6 +1,6 @@
 class TShape extends Shape {
-    constructor(column: number) {
-        super();
+    constructor(column: number, rotation: number) {
+        super(rotation);
         let x: number = column / 2;
         let y: number = -2;
 
@@ -11,7 +11,7 @@ class TShape extends Shape {
     }
 
     public rotate(): Point[] {
-        let newPoints: Point[];
+        let newPoints: Point[] = new Array<Point>();
         let rotation: number = (this.rotation + 1) % 4;
 
         switch(rotation) {
