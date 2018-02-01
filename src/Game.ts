@@ -1,11 +1,3 @@
-const enum GameState {
-    NotStart,
-    Initializing,
-    Playing,
-    Removing,
-    Adding,
-    GameOver
-}
 class Game {
     private _score: number;
     private _level: number;
@@ -43,6 +35,10 @@ class Game {
 
     public startNewGame(): void {
         this.resetGame();
+    }
+
+    public addNewRows(countOfRows: number): void {
+        // TODO
     }
 
     private resetGame(): void {
