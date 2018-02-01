@@ -16,16 +16,18 @@ class ZShape extends Shape {
 
     public rotate(): Point[] {
         let newPoints: Point[];
-        let rotation: number = (this.rotation + 1) % 2;
+        let rotation: number = (this.rotation + 1) % 4;
         
         switch(rotation) {
             case 0:
+            case 2:
                 newPoints.push(new Point(this.points[1].x, this.points[1].y - 1));
                 newPoints.push(new Point(this.points[1].x, this.points[1].y));
                 newPoints.push(new Point(this.points[1].x + (this.leftHanded ? -1 : 1), this.points[1].y));
                 newPoints.push(new Point(this.points[1].x + (this.leftHanded ? -1 : 1), this.points[1].y + 1));
                 break;
             case 1:
+            case 3:
                 newPoints.push(new Point(this.points[1].x + 1, this.points[1].y));
                 newPoints.push(new Point(this.points[1].x, this.points[1].y));
                 newPoints.push(new Point(this.points[1].x, this.points[1].y + (this.leftHanded ? -1 : 1)));

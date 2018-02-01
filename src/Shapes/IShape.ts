@@ -13,16 +13,18 @@ class IShape extends Shape {
 
     public rotate(): Point[] {
         let newPoints: Point[];
-        let rotation: number = (this.rotation + 1) % 2;
+        let rotation: number = (this.rotation + 1) % 4;
 
         switch(rotation) {
             case 0:
+            case 2:
                 newPoints.push(new Point(this.points[2].x, this.points[2].y - 2));
                 newPoints.push(new Point(this.points[2].x, this.points[2].y - 1));
                 newPoints.push(new Point(this.points[2].x, this.points[2].y));
                 newPoints.push(new Point(this.points[2].x, this.points[2].y + 1));
                 break;
             case 1:
+            case 3:
                 newPoints.push(new Point(this.points[2].x + 2, this.points[2].y));
                 newPoints.push(new Point(this.points[2].x + 1, this.points[2].y));
                 newPoints.push(new Point(this.points[2].x, this.points[2].y));

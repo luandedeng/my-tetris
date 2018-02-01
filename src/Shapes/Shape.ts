@@ -49,5 +49,9 @@ abstract class Shape {
         return this.move(1, 0);
     }
 
+    public handleRotateSucceed() {
+        this.rotation = (this.rotation + 1) % 4;
+    }
+
     public abstract rotate(): Point[];
 }
