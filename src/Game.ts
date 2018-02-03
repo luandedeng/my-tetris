@@ -4,6 +4,14 @@ enum GameState {
     Finishing_Shape,
     Game_Over
 }
+
+enum ShapeMovement {
+    Dropping_Down,
+    Moving_Left,
+    Moving_Right,
+    Rotating
+}
+
 class Game {
     private _score: number;
     private _level: number;
@@ -11,7 +19,7 @@ class Game {
     private _nextShape: Shape;
     private _grid: Grid;
     private _timer: egret.Timer;
-    private _nextState: GameState;
+    private _currentState: GameState;
 
     /*
     * Accessors
@@ -50,7 +58,7 @@ class Game {
     }
 
     public update(): void {
-        let state: GameState = this._nextState;
+        let state: GameState = this._currentState;
         switch (state) {
             case GameState.Adding_New_Shape:
                 this._currentShape = this._nextShape;
@@ -58,7 +66,52 @@ class Game {
                 this.switchState(GameState.Dropping_Shape);
                 break;
             case GameState.Dropping_Shape:
-                let newPos: Point[] = this._currentShape.drop();
+                this.handleShapeMovement(ShapeMovement.Dropping_Down);
+                break;
+            case GameState.Finishing_Shape:
+                let indexes: number[] = this.grid.checkRows(this._currentShape);
+                this.calculateScore(indexes.length);
+                this.switchState(GameState.Adding_New_Shape);
+                break;
+            case GameState.Game_Over:
+                this._timer.stop();
+                break;
+        }
+    }
+
+    public addNewRows(countOfRows: number): void {
+        // TODO
+    }
+
+    public dropShape(): void {
+        if (this._currentState == GameState.Dropping_Shape) {
+            this.handleShapeMovement(ShapeMovement.Dropping_Down);
+        }
+    }
+
+    public moveShapeToLeft(): void {
+        if (this._currentState == GameState.Dropping_Shape) {
+            this.handleShapeMovement(ShapeMovement.Moving_Left);
+        }
+    }
+
+    public moveShapeToRight(): void {
+        if (this._currentState == GameState.Dropping_Shape) {
+            this.handleShapeMovement(ShapeMovement.Moving_Right);
+        }
+    }
+
+    public rotateShape(): void {
+        if (this._currentState == GameState.Dropping_Shape) {
+            this.handleShapeMovement(ShapeMovement.Rotating);
+        }
+    }
+
+    private handleShapeMovement(movement: ShapeMovement): void {
+        let newPos: Point[] = new Array<Point>();
+        switch(movement) {
+            case ShapeMovement.Dropping_Down:
+                newPos = this._currentShape.drop();
                 if (this.grid.isPosValid(newPos)) {
                     this._currentShape.setPosition(newPos);
                 }
@@ -71,18 +124,25 @@ class Game {
                     }
                 }
                 break;
-            case GameState.Finishing_Shape:
-                let indexes: number[] = this.grid.checkRows(this._currentShape);
-                this.switchState(GameState.Adding_New_Shape);
+            case ShapeMovement.Moving_Left:
+                newPos = this._currentShape.moveLeft();
+                if (this.grid.isPosValid(newPos)) {
+                    this._currentShape.setPosition(newPos);
+                }
                 break;
-            case GameState.Game_Over:
-                this._timer.stop();
+            case ShapeMovement.Moving_Right:
+                newPos = this._currentShape.moveRight();
+                if (this.grid.isPosValid(newPos)) {
+                    this._currentShape.setPosition(newPos);
+                }
+                break;
+            case ShapeMovement.Rotating:
+                newPos = this._currentShape.rotate();
+                if (this.grid.isPosValid(newPos)) {
+                    this._currentShape.setPosition(newPos, true);
+                }
                 break;
         }
-    }
-
-    public addNewRows(countOfRows: number): void {
-        // TODO
     }
 
     private calculateScore(countOfRows: number): void {
@@ -103,7 +163,7 @@ class Game {
     }
 
     private switchState(state: GameState) {
-        this._nextState = state;
+        this._currentState = state;
     }
 
     private resetGame(): void {
