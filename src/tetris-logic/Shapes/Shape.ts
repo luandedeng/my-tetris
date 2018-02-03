@@ -30,6 +30,7 @@ abstract class Shape {
 
     public constructor(rotation: number) {
         this._rotation = (rotation + 1) % 4;
+        this._points = new Array<Point>();
     }
 
     private move(x: number, y: number): Point[] {

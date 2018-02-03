@@ -13,12 +13,13 @@ enum ShapeMovement {
 }
 
 class GameUpdateEvent extends egret.Event {
-    public constructor(type: string = "", bubbles: boolean = false, cancelable: boolean = false) {
+    public static GAME_UPDATE: string = "game_update";
+    public constructor(type: string, bubbles: boolean = false, cancelable: boolean = false) {
         super(type, bubbles, cancelable);
     }
 }
 
-class Game extends egret.EventDispatcher{
+class TetrisGame extends egret.EventDispatcher{
     private _score: number;
     private _level: number;
     private _currentShape: Shape;
@@ -53,8 +54,8 @@ class Game extends egret.EventDispatcher{
     public constructor(rows: number = 20, columns: number = 10) {
         super();
         this._grid = new Grid(rows, columns);
-        this._timer = new egret.Timer(1000);
-        this._timer.addEventListener(egret.TimerEvent.TIMER_COMPLETE, this.update, this);
+        this._timer = new egret.Timer(1000, 0);
+        this._timer.addEventListener(egret.TimerEvent.TIMER, this.update, this);
         this.resetGame();
     }
 
@@ -64,27 +65,29 @@ class Game extends egret.EventDispatcher{
         this._timer.start();
     }
 
-    public update(): void {
-        let state: GameState = this._currentState;
-        switch (state) {
-            case GameState.Adding_New_Shape:
-                this._currentShape = this._nextShape;
-                this._nextShape = this.generateShape();
-                this.switchState(GameState.Dropping_Shape);
-                break;
-            case GameState.Dropping_Shape:
-                this.handleShapeMovement(ShapeMovement.Dropping_Down);
-                break;
-            case GameState.Finishing_Shape:
-                let indexes: number[] = this.grid.checkRows(this._currentShape);
-                this.calculateScore(indexes.length);
-                this.switchState(GameState.Adding_New_Shape);
-                break;
-            case GameState.Game_Over:
-                this._timer.stop();
-                break;
+    public update(event: egret.TimerEvent): void {
+        if (event.type == egret.TimerEvent.TIMER) {
+            let state: GameState = this._currentState;
+            switch (state) {
+                case GameState.Adding_New_Shape:
+                    this._currentShape = this._nextShape;
+                    this._nextShape = this.generateShape();
+                    this.switchState(GameState.Dropping_Shape);
+                    break;
+                case GameState.Dropping_Shape:
+                    this.handleShapeMovement(ShapeMovement.Dropping_Down);
+                    break;
+                case GameState.Finishing_Shape:
+                    let indexes: number[] = this.grid.checkRows(this._currentShape);
+                    this.calculateScore(indexes.length);
+                    this.switchState(GameState.Adding_New_Shape);
+                    break;
+                case GameState.Game_Over:
+                    this._timer.stop();
+                    break;
+            }
+            this.notifyUpdate();
         }
-        this.notifyUpdate();
     }
 
     public addNewRows(countOfRows: number): void {
@@ -120,7 +123,7 @@ class Game extends egret.EventDispatcher{
     }
 
     private notifyUpdate(): void {
-        let event: GameUpdateEvent = new GameUpdateEvent();
+        let event: GameUpdateEvent = new GameUpdateEvent(GameUpdateEvent.GAME_UPDATE);
         this.dispatchEvent(event);
     }
 

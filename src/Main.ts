@@ -29,10 +29,13 @@
 
 class Main extends egret.DisplayObjectContainer {
 
+    private _game: TetrisGame;
 
 
     public constructor() {
         super();
+        this._game = new TetrisGame(20, 10);
+        this._game.addEventListener(GameUpdateEvent.GAME_UPDATE, this.handleGameUpdate, this);
         this.addEventListener(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
     }
 
@@ -70,7 +73,11 @@ class Main extends egret.DisplayObjectContainer {
         await platform.login();
         const userInfo = await platform.getUserInfo();
         console.log(userInfo);
+        this._game.startNewGame();
+    }
 
+    private handleGameUpdate(event: GameUpdateEvent): void {
+        console.log("current shape pos: " + this._game.currentShape.points[0].x + "-" + this._game.currentShape.points[0].y);
     }
 
     private async loadResource() {

@@ -17,6 +17,10 @@ class Grid {
     constructor(rows: number, columns: number) {
         this._rows = rows;
         this._columns = columns;
+        this._blockStatus = new Array<Array<boolean>>(rows);
+        for (let row: number = 0; row < rows; ++row) {
+            this._blockStatus[row] = new Array<boolean>(columns);
+        }
     }
 
     public addShape(shape: Shape): boolean  {
@@ -110,12 +114,8 @@ class Grid {
         return isValid;
     }
 
-    public initGrid(): void {
-        this.setGridStatus(false);
-    }
-
     public clearGrid(): void {
-        this.setGridStatus(true);
+        this.setGridStatus(false);
     }
     
     private setGridStatus(status: boolean): void {
