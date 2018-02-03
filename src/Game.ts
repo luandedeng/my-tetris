@@ -12,7 +12,13 @@ enum ShapeMovement {
     Rotating
 }
 
-class Game {
+class GameUpdateEvent extends egret.Event {
+    public constructor(type: string = "", bubbles: boolean = false, cancelable: boolean = false) {
+        super(type, bubbles, cancelable);
+    }
+}
+
+class Game extends egret.EventDispatcher{
     private _score: number;
     private _level: number;
     private _currentShape: Shape;
@@ -45,6 +51,7 @@ class Game {
     }
 
     public constructor(rows: number = 20, columns: number = 10) {
+        super();
         this._grid = new Grid(rows, columns);
         this._timer = new egret.Timer(1000);
         this._timer.addEventListener(egret.TimerEvent.TIMER_COMPLETE, this.update, this);
@@ -77,6 +84,7 @@ class Game {
                 this._timer.stop();
                 break;
         }
+        this.notifyUpdate();
     }
 
     public addNewRows(countOfRows: number): void {
@@ -86,25 +94,34 @@ class Game {
     public dropShape(): void {
         if (this._currentState == GameState.Dropping_Shape) {
             this.handleShapeMovement(ShapeMovement.Dropping_Down);
+            this.notifyUpdate();
         }
     }
 
     public moveShapeToLeft(): void {
         if (this._currentState == GameState.Dropping_Shape) {
             this.handleShapeMovement(ShapeMovement.Moving_Left);
+            this.notifyUpdate();
         }
     }
 
     public moveShapeToRight(): void {
         if (this._currentState == GameState.Dropping_Shape) {
             this.handleShapeMovement(ShapeMovement.Moving_Right);
+            this.notifyUpdate();
         }
     }
 
     public rotateShape(): void {
         if (this._currentState == GameState.Dropping_Shape) {
             this.handleShapeMovement(ShapeMovement.Rotating);
+            this.notifyUpdate();
         }
+    }
+
+    private notifyUpdate(): void {
+        let event: GameUpdateEvent = new GameUpdateEvent();
+        this.dispatchEvent(event);
     }
 
     private handleShapeMovement(movement: ShapeMovement): void {
